@@ -3,79 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with Service Assistant</title>
+    <title>Service Assistant Chatbot</title>
     <style>
+        body {
+            background-color: #535252; /* Background color */
+        }
         .container {
             max-width: 800px;
             margin: auto;
             padding: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #adacac;
             border-radius: 5px;
+            position: relative; /* Added for positioning the waiting sign */
+            background-color: rgb(255, 255, 255); /* Container background color */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow effect to borders */
+        }
+        #chat-history {
+            max-height: 350px; /* Set maximum height for the chat history */
+            overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+            margin-bottom: 10px; /* Add some margin at the bottom */
         }
         .message {
             margin-bottom: 10px;
+            opacity: 0; /* Hide messages initially */
+            transition: opacity 0.3s ease; /* Add transition effect */
+        }
+        .message.show {
+            opacity: 1; /* Show messages with animation */
         }
         .user-message {
-            background-color: #e6e6e6;
+            background-color: #adedff;
             padding: 10px;
             border-radius: 5px;
         }
         .assistant-message {
-            background-color: #f0f0f0;
+            background-color: #aaffba;
             padding: 10px;
             border-radius: 5px;
+        }
+        .waiting-sign {
+            position: absolute;
+            bottom: 10px; /* Position at the bottom */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Center horizontally */
+            display: none; /* Initially hidden */
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 4px solid #888;
+            border-top-color: transparent;
+            animation: rotate 1s linear infinite; /* Apply rotation animation */
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg); /* Initial rotation */
+            }
+            to {
+                transform: rotate(360deg); /* Final rotation */
+            }
+        }
+
+        #logo {
+            display: block;
+            margin: auto;
+            width: 120px; /* Adjust logo width */
+            height: auto; /* Add some space below the logo */
+        }
+        #logo_head {
+            display: block;
+            margin: auto;
+            width: 800px; /* Adjust logo width */
+            height: auto;
+            /* Add some space below the logo */
+        }
+
+        #chat-form {
+            position: relative; /* Added for positioning the waiting sign */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Chat with Service Assistant</h1>
-        <img src="path_to_your_gif.gif" alt="Chat Assistant GIF" width="200" height="200">
-        <div id="chat-history"></div>
-        <form id="chat-form">
-            <input type="text" id="user-input" placeholder="Type your message here...">
-            <button type="submit">Send</button>
-        </form>
-    </div>
+<div class="container">
+    <img id="logo_head" src="/images/nikotronics_animation.gif" alt="Company Logo">
+    <img id="logo" src="/images/chatbot.gif" alt="Company Logo"> <!-- Replace "your-logo.gif" with your actual logo file -->
+    <div id="chat-history"></div>
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button type="submit">Send</button>
+        <div id="waiting-sign" class="waiting-sign"></div> <!-- Waiting sign -->
+    </form>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const chatHistory = document.getElementById('chat-history');
-            const chatForm = document.getElementById('chat-form');
-            const userInput = document.getElementById('user-input');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chatHistory = document.getElementById('chat-history');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const waitingSign = document.getElementById('waiting-sign');
 
-            chatForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const userMessage = userInput.value.trim();
-                if (userMessage === '') return;
+        chatForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const userMessage = userInput.value.trim();
+            if (userMessage === '') return;
 
-                appendMessage('user', userMessage);
-                userInput.value = '';
+            appendMessage('user', userMessage);
+            userInput.value = '';
+            showWaitingSign(); // Show waiting sign while processing
 
-                fetch('/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: `user_input=${userMessage}`
-                })
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `user_input=${userMessage}`
+            })
                 .then(response => response.text())
                 .then(assistantMessage => {
                     appendMessage('assistant', assistantMessage);
+                    hideWaitingSign(); // Hide waiting sign after response received
+                    chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to the bottom after adding a new message
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    hideWaitingSign(); // Hide waiting sign in case of error
                 });
-            });
-
-            function appendMessage(role, content) {
-                const messageDiv = document.createElement('div');
-                const messageClass = role === 'user' ? 'user-message' : 'assistant-message';
-                messageDiv.classList.add('message', messageClass);
-                messageDiv.innerText = content;
-                chatHistory.appendChild(messageDiv);
-            }
         });
-    </script>
+
+        function appendMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            const messageClass = role === 'user' ? 'user-message' : 'assistant-message';
+            messageDiv.classList.add('message', messageClass);
+            messageDiv.innerText = content;
+            chatHistory.appendChild(messageDiv);
+            // Trigger reflow to enable animation
+            messageDiv.offsetHeight;
+            messageDiv.classList.add('show');
+        }
+
+        function showWaitingSign() {
+            waitingSign.style.display = 'block';
+        }
+
+        function hideWaitingSign() {
+            waitingSign.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>
