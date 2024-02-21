@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Service Assistant</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            background-color: #e6e6e6;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .assistant-message {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat with Service Assistant</h1>
+        <img src="path_to_your_gif.gif" alt="Chat Assistant GIF" width="200" height="200">
+        <div id="chat-history"></div>
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message here...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatHistory = document.getElementById('chat-history');
+            const chatForm = document.getElementById('chat-form');
+            const userInput = document.getElementById('user-input');
+
+            chatForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const userMessage = userInput.value.trim();
+                if (userMessage === '') return;
+
+                appendMessage('user', userMessage);
+                userInput.value = '';
+
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `user_input=${userMessage}`
+                })
+                .then(response => response.text())
+                .then(assistantMessage => {
+                    appendMessage('assistant', assistantMessage);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            function appendMessage(role, content) {
+                const messageDiv = document.createElement('div');
+                const messageClass = role === 'user' ? 'user-message' : 'assistant-message';
+                messageDiv.classList.add('message', messageClass);
+                messageDiv.innerText = content;
+                chatHistory.appendChild(messageDiv);
+            }
+        });
+    </script>
+</body>
+</html>
