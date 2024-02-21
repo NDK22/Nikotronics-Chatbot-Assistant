@@ -17,7 +17,7 @@ Flask: Python-based web framework used for building the backend server.
 OpenAI API: Integration with OpenAI's language models for natural language understanding and generation.
 HTML/CSS/JavaScript: Frontend development technologies for creating the user interface and handling client-side interactions.
 
-![Chatbot Screenshot](/path/to/screenshot.png)
+![Chatbot Screenshot]([https://github.com/NDK22/Nikotronics-Chatbot-Assistant/blob/main/eg.png])
 
 https://nikhildaskaravatt.pythonanywhere.com/ You can try out the live demo of the chatbot here.
 
