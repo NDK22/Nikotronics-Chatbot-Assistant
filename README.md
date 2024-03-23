@@ -19,5 +19,7 @@ HTML/CSS/JavaScript: Frontend development technologies for creating the user int
 
 ![Chatbot Screenshot](https://github.com/NDK22/Nikotronics-Chatbot-Assistant/blob/main/eg.png)
 
-You can try out the live demo of the chatbot here: https://nikhildaskaravatt.pythonanywhere.com/ 
+You can try out the live demo of the chatbot here: 
+https://nikhildaskaravatt.pythonanywhere.com/ 
+http://18.220.174.52/
 
